@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>11</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Anasayfa</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="photos.qrc">
+    <normaloff>:/loaded_photo/para.png</normaloff>:/loaded_photo/para.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>640</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuDosya">
+    <property name="title">
+     <string>Ekle</string>
+    </property>
+    <addaction name="actionPersonel_Ekle"/>
+    <addaction name="actionY_l_Ekle"/>
+   </widget>
+   <widget class="QMenu" name="menu_k">
+    <property name="title">
+     <string>Çıkış</string>
+    </property>
+    <addaction name="action_k_Yap"/>
+   </widget>
+   <widget class="QMenu" name="menuYard_m">
+    <property name="title">
+     <string>Yardım</string>
+    </property>
+    <addaction name="actionHakk_nda"/>
+    <addaction name="actionYard_m"/>
+   </widget>
+   <addaction name="menuDosya"/>
+   <addaction name="menu_k"/>
+   <addaction name="menuYard_m"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionPersonel_Ekle">
+   <property name="text">
+    <string>Personel Ekle</string>
+   </property>
+  </action>
+  <action name="actionY_l_Ekle">
+   <property name="text">
+    <string>Yıl Ekle</string>
+   </property>
+  </action>
+  <action name="action_k_Yap">
+   <property name="text">
+    <string>Çıkış Yap</string>
+   </property>
+  </action>
+  <action name="actionHakk_nda">
+   <property name="text">
+    <string>Hakkında..</string>
+   </property>
+  </action>
+  <action name="actionYard_m">
+   <property name="text">
+    <string>Yardım</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="photos.qrc"/>
+ </resources>
+ <connections/>
+</ui>

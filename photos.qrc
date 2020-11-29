@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="loaded_photo">
+    <file>defter.ico</file>
+    <file>defter.png</file>
+    <file>para.png</file>
+  </qresource>
+</RCC>
