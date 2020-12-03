@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
 import sys
-from inserting_database_python import Ui_Form
+from add_database_python import Ui_Form
 
 
 class DatabaseWindow(QWidget):
