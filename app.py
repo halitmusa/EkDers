@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication
 from create_main_page import MainWindow
 
+
 class App(MainWindow):
     def __init__(self):
         super().__init__()
