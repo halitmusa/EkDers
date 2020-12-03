@@ -840,20 +840,20 @@ QTabBar::tab:!selected:hover
     <property name="title">
      <string>Ekle</string>
     </property>
-    <addaction name="actionPersonel_Ekle"/>
-    <addaction name="actionY_l_Ekle"/>
+    <addaction name="act_add_staff"/>
+    <addaction name="act_add_year"/>
    </widget>
    <widget class="QMenu" name="menu_k">
     <property name="title">
      <string>Çıkış</string>
     </property>
-    <addaction name="action_k_Yap"/>
+    <addaction name="act_exit"/>
    </widget>
    <widget class="QMenu" name="menuYard_m">
     <property name="title">
      <string>Yardım</string>
     </property>
-    <addaction name="actionHakk_nda"/>
+    <addaction name="act_about"/>
     <addaction name="actionYard_m"/>
    </widget>
    <addaction name="menuDosya"/>
@@ -861,22 +861,22 @@ QTabBar::tab:!selected:hover
    <addaction name="menuYard_m"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionPersonel_Ekle">
+  <action name="act_add_staff">
    <property name="text">
     <string>Kişi Ekle</string>
    </property>
   </action>
-  <action name="actionY_l_Ekle">
+  <action name="act_add_year">
    <property name="text">
     <string>Yıl Ekle</string>
    </property>
   </action>
-  <action name="action_k_Yap">
+  <action name="act_exit">
    <property name="text">
     <string>Çıkış Yap</string>
    </property>
   </action>
-  <action name="actionHakk_nda">
+  <action name="act_about">
    <property name="text">
     <string>Hakkında..</string>
    </property>
