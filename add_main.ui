@@ -314,7 +314,7 @@ QTabBar::tab:!selected:hover
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="le_day_normal"/>
+                  <widget class="QLineEdit" name="le_normal_day"/>
                  </item>
                 </layout>
                </item>
@@ -328,7 +328,7 @@ QTabBar::tab:!selected:hover
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="le_day_night"/>
+                  <widget class="QLineEdit" name="le_normal_night"/>
                  </item>
                 </layout>
                </item>
@@ -342,7 +342,7 @@ QTabBar::tab:!selected:hover
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="le_weekend"/>
+                  <widget class="QLineEdit" name="le_normal_weekend"/>
                  </item>
                 </layout>
                </item>
@@ -403,7 +403,7 @@ QTabBar::tab:!selected:hover
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="le_day_course"/>
+                  <widget class="QLineEdit" name="le_course_day"/>
                  </item>
                 </layout>
                </item>
@@ -417,7 +417,7 @@ QTabBar::tab:!selected:hover
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="le_night_course"/>
+                  <widget class="QLineEdit" name="le_course_night"/>
                  </item>
                 </layout>
                </item>
@@ -431,7 +431,7 @@ QTabBar::tab:!selected:hover
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="le_weekend_course"/>
+                  <widget class="QLineEdit" name="le_course_weekend"/>
                  </item>
                 </layout>
                </item>
@@ -478,7 +478,7 @@ QTabBar::tab:!selected:hover
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="le_day_special"/>
+                  <widget class="QLineEdit" name="le_special_day"/>
                  </item>
                 </layout>
                </item>
@@ -492,7 +492,7 @@ QTabBar::tab:!selected:hover
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="le_night_special"/>
+                  <widget class="QLineEdit" name="le_special_night"/>
                  </item>
                 </layout>
                </item>
@@ -506,7 +506,7 @@ QTabBar::tab:!selected:hover
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="le_weekend_special"/>
+                  <widget class="QLineEdit" name="le_special_weekend"/>
                  </item>
                 </layout>
                </item>

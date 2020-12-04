@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>445</width>
-    <height>303</height>
+    <width>487</width>
+    <height>315</height>
    </rect>
   </property>
   <property name="font">
@@ -489,7 +489,7 @@ QStatusBar
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="le_year"/>
+               <widget class="QComboBox" name="cmb_year"/>
               </item>
              </layout>
             </item>
@@ -596,7 +596,7 @@ QStatusBar
                  </size>
                 </property>
                 <property name="text">
-                 <string>DV Oranı (Binde) : </string>
+                 <string>Damga Vergisi Oranı : </string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -649,22 +649,16 @@ QStatusBar
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+          <widget class="QPushButton" name="btn_update">
+           <property name="text">
+            <string>Güncelle</string>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
+          </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btn_clear">
+          <widget class="QPushButton" name="btn_delete">
            <property name="text">
-            <string>Temizle</string>
+            <string>Sil</string>
            </property>
           </widget>
          </item>
