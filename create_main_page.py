@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QAction
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QInputDialog, QMessageBox
 import sys
 from add_main_python import Ui_MainWindow
 from db_manager import DbManager
@@ -24,6 +24,7 @@ class MainWindow(QMainWindow):
 
         self.ui.btn_calculate.clicked.connect(self.calculator)
         self.ui.btn_delete.clicked.connect(self.cleaner)
+        self.ui.btn_record.clicked.connect(self.recorder)
 
         self.ui.le_normal_day.textChanged.connect(lambda: self.is_number(self.ui.le_normal_day))
         self.ui.le_normal_night.textChanged.connect(lambda: self.is_number(self.ui.le_normal_night))
@@ -75,10 +76,16 @@ class MainWindow(QMainWindow):
         month_list = [i[1] for i in self.connection.selector(f"""SELECT * FROM months""")]
         if self.ui.cmb_period.currentText() == "1. Altı Aylık Dönem":
             self.ui.cmb_month.addItems(month_list[:6])
-            self.ui.cmb_month.setCurrentIndex(self.current_month-1)
+            if self.current_month < 7:
+                self.ui.cmb_month.setCurrentIndex(self.current_month-1)
+            else:
+                self.ui.cmb_month.setCurrentIndex(0)
         else:
             self.ui.cmb_month.addItems(month_list[6:])
-            self.ui.cmb_month.setCurrentIndex(self.current_month - 7)
+            if self.current_month > 6:
+                self.ui.cmb_month.setCurrentIndex(self.current_month - 7)
+            else:
+                self.ui.cmb_month.setCurrentIndex(0)
 
     @staticmethod
     def obj_control(obj):
@@ -113,7 +120,6 @@ class MainWindow(QMainWindow):
             income_tax = 0.27
         elif self.ui.rb_35.isChecked():
             income_tax = 0.35
-
         obj_list = [self.obj_control(self.ui.le_normal_day) * price_coefficient * education_state_multiplier * day_coefficient,
                     self.obj_control(self.ui.le_normal_night) * price_coefficient * education_state_multiplier * night_coefficient,
                     self.obj_control(self.ui.le_normal_weekend) * price_coefficient * education_state_multiplier * night_coefficient,
@@ -125,7 +131,6 @@ class MainWindow(QMainWindow):
                     self.obj_control(self.ui.le_special_night) * price_coefficient * education_state_multiplier * night_coefficient * special_edu_multiplier,
                     self.obj_control(self.ui.le_special_weekend) * price_coefficient * education_state_multiplier * night_coefficient * special_edu_multiplier
                     ]
-
         gross_total = sum(obj_list)
         income_deduction = gross_total * income_tax
         tax_deduction = gross_total * tax_rate
@@ -144,7 +149,33 @@ class MainWindow(QMainWindow):
             obj.clear()
 
     def recorder(self):
-        pass
+        month = self.ui.cmb_month.currentText()
+        year = self.ui.cmb_year.currentText()
+        year_id = self.connection.find(f"""SELECT id FROM years WHERE name = "{year}" """)
+        month_id = self.connection.find(f"""SELECT id FROM months WHERE name = "{month}" """)
+
+        gross = self.ui.le_gross.text()[:-3]
+        deduction = self.ui.le_deduction.text()[:-3]
+        net = self.ui.le_net.text()[:-3]
+        if gross != "" and deduction != "" and net != "":
+            staff_list = ["-".join([str(i[2]), str(i[0])]) for i in self.connection.selector(f"""SELECT * FROM staffs""")]
+            name, ok_pressed = QInputDialog.getItem(self, "Seçim Ekranı", "Kayıt yapmak istediğiniz personeli seçiniz.", staff_list, 0, False)
+            if ok_pressed:
+                staff_id = name.split("-")[1]
+                counter = self.connection.find(f"""SELECT COUNT(id) FROM staffs_prices WHERE yearID={year_id} AND monthID={month_id} AND staffID={staff_id}""")
+                if counter == 0:
+                    self.connection.recorder(
+                        f"""INSERT INTO staffs_prices(staffID, yearID, monthID, gross, deduction, net) VALUES({staff_id}, {year_id}, {month_id}, {float(gross)}, {float(deduction)}, {float(net)})""")
+                    QMessageBox.warning(self, "Dikkat", "Kayıt yapıldı.")
+                else:
+                    result = QMessageBox.question(self, "Dikkat", "Bu kayıt var.\nÜzerine yazmak iste misiniz?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                    if result == QMessageBox.Yes:
+                        self.connection.updater(
+                            f"""UPDATE staffs_prices SET gross={float(gross)}, deduction={float(deduction)}, net={float(net)}
+                             WHERE staffID={staff_id} AND yearID={year_id} AND monthID={month_id} """)
+                        QMessageBox.warning(self, "Dikkat", "Üzerine yazıldı")
+        else:
+            QMessageBox.warning(self, "Dikkat", "Ortada hesaplanan bir şey yok.")
 
     def closeEvent(self, event):
         self.connection.db_closer()

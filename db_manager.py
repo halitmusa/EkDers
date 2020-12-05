@@ -37,7 +37,10 @@ class DbManager:
             self.cur.execute(p_text)
             self.db.commit()
         except sqlite3.Error as err:
-            self.message_box(str(err))
+            if err == 1451:
+                QMessageBox.warning(None, "UYARI !!!", "Bu kayıtla ilişkili kayıtlar var.\nKaydı silemezsiniz.\nSadece güncelleme yapabilirsiniz.")
+            else:
+                self.message_box(str(err))
 
     def selector(self, p_text):
         try:
