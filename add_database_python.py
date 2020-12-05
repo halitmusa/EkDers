@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(487, 315)
+        Form.resize(517, 315)
         font = QtGui.QFont()
         font.setPointSize(11)
         font.setBold(True)
@@ -566,6 +566,7 @@ class Ui_Form(object):
         self.gridLayout = QtWidgets.QGridLayout(self.groupBox)
         self.gridLayout.setObjectName("gridLayout")
         self.lw_recorded_years = QtWidgets.QListWidget(self.groupBox)
+        self.lw_recorded_years.setMinimumSize(QtCore.QSize(200, 0))
         self.lw_recorded_years.setMaximumSize(QtCore.QSize(150, 16777215))
         self.lw_recorded_years.setObjectName("lw_recorded_years")
         self.gridLayout.addWidget(self.lw_recorded_years, 0, 0, 1, 1)

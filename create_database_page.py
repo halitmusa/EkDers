@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QAction
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QAction, QMessageBox
 import sys
 from add_database_python import Ui_Form
 from db_manager import DbManager
@@ -18,8 +18,11 @@ class DatabaseWindow(QWidget):
         self.loader_year()
         self.loader_period()
         self.loader_recorded_years()
+        self.import_data()
 
-        self.ui.btn_record.clicked.connect(self.recorder)
+        self.ui.btn_record.clicked.connect(self.data_processor)
+        self.ui.btn_update.clicked.connect(self.data_processor)
+        self.ui.btn_delete.clicked.connect(self.data_processor)
 
         self.ui.le_night_price_coefficient.textChanged.connect(lambda: self.is_number(self.ui.le_night_price_coefficient))
         self.ui.le_day_price_coefficient.textChanged.connect(lambda: self.is_number(self.ui.le_day_price_coefficient))
@@ -27,7 +30,36 @@ class DatabaseWindow(QWidget):
         self.ui.cmb_year.currentTextChanged.connect(self.import_data)
         self.ui.cmb_period.currentTextChanged.connect(self.import_data)
 
-        # self.ui.lw_recorded_years.currentRowChanged.connect(self.import_data)
+    def error_message_shower(self, p_list, sender):
+        control_list = p_list
+        for index, state in enumerate(control_list):
+            if index == 0 and not state and sender.text() == "Kaydet":
+                QMessageBox.warning(self, "Dikkat", "Kayıtlı veri kaydedilemez. Ancak güncelleyebilirsiniz.")
+                break
+            elif index == 0 and not state and sender.text() == "Güncelle":
+                QMessageBox.warning(self, "Dikkat", "Güncellemek istediğiniz kayıt mevcut değil.")
+                break
+            elif index == 0 and not state and sender.text() == "Sil":
+                QMessageBox.warning(self, "Dikkat", "Silmek istediğiniz kayıt mevcut değil")
+                break
+            elif index == 1 and not state:
+                QMessageBox.warning(self, "Dikkat", "Memur maaş katsayısı alanı boş geçilemez.")
+                break
+            elif index == 2 and not state:
+                QMessageBox.warning(self, "Dikkat", "Memur maaş katsayısı alanı ondalıklı bir değer içermelidir.")
+                break
+            elif index == 3 and not state:
+                QMessageBox.warning(self, "Dikkat", "Gündüz ücret katsayısı boş geçilemez")
+                break
+            elif index == 4 and not state:
+                QMessageBox.warning(self, "Dikkat", "Gece ücret katsayısı boş geçilemez.")
+                break
+            elif index == 5 and not state:
+                QMessageBox.warning(self, "Dikkat", "Damga vergisi oranı boş geçilemez.")
+                break
+            elif index == 6 and not state:
+                QMessageBox.warning(self, "Dikkat", "Damga vergisi oranı ondalıklı bir değer olmalıdır.")
+                break
 
     def cleaner(self):
         self.ui.lw_recorded_years.setCurrentItem(None)
@@ -35,7 +67,6 @@ class DatabaseWindow(QWidget):
         self.ui.le_day_price_coefficient.clear()
         self.ui.le_night_price_coefficient.clear()
         self.ui.le_tax_rate.clear()
-
 
     @staticmethod
     def is_number(obj):
@@ -51,8 +82,8 @@ class DatabaseWindow(QWidget):
 
         if len(data_list) > 0:
             self.ui.le_staff_coefficient.setText(str(data_list[0][2]))
-            self.ui.le_day_price_coefficient.setText(str(data_list[0][3]))
-            self.ui.le_night_price_coefficient.setText(str(data_list[0][4]))
+            self.ui.le_day_price_coefficient.setText(str(data_list[0][4]))
+            self.ui.le_night_price_coefficient.setText(str(data_list[0][3]))
             self.ui.le_tax_rate.setText(str(data_list[0][5]))
         else:
             self.cleaner()
@@ -75,8 +106,9 @@ class DatabaseWindow(QWidget):
         for year, period in year_list:
             year_name = self.connection.find(f"""SELECT name FROM years WHERE id={year}""")
             period_name = self.connection.find(f"""SELECT name FROM periods WHERE id={period}""")
-            combined_name = "-".join([year_name,period_name])
+            combined_name = "-".join([year_name, period_name])
             self.ui.lw_recorded_years.addItem(combined_name)
+        self.ui.lw_recorded_years.sortItems()
 
     @staticmethod
     def float_controller(p_number):
@@ -86,7 +118,8 @@ class DatabaseWindow(QWidget):
                 return False
         return True
 
-    def recorder(self):
+    def data_processor(self):
+        sender = self.sender()
         year_list = self.connection.selector(f"""SELECT yearID, periodID FROM data""")
         year_name = self.ui.cmb_year.currentText()
         year_id = self.connection.find(f"""SELECT id FROM years WHERE name="{year_name}" """)
@@ -96,13 +129,33 @@ class DatabaseWindow(QWidget):
         day_coefficient = self.ui.le_day_price_coefficient.text()
         night_coefficient = self.ui.le_night_price_coefficient.text()
         tax_rate = self.ui.le_tax_rate.text()
-
-        control_list = [self.float_controller(tax_rate), self.float_controller(price_coefficient), day_coefficient != "", night_coefficient != "", tax_rate != "",
-                        price_coefficient != "", (year_id, period_id) not in year_list]
-        if False not in control_list:
-            print("olacak")
+        if sender.text() == "Kaydet":
+            control_list = [(year_id, period_id) not in year_list, price_coefficient != "", self.float_controller(price_coefficient), day_coefficient != "", night_coefficient != "",
+                            tax_rate != "", self.float_controller(tax_rate)]
+            if False not in control_list:
+                self.connection.recorder(f"""INSERT INTO data VALUES ({year_id}, {period_id}, {float(price_coefficient)}, {int(day_coefficient)}, {int(night_coefficient)}, {float(tax_rate)})""")
+                self.loader_recorded_years()
+            else:
+                self.error_message_shower(control_list, sender)
+        elif sender.text() == "Güncelle":
+            control_list = [(year_id, period_id) in year_list, price_coefficient != "", self.float_controller(price_coefficient), day_coefficient != "", night_coefficient != "",
+                            tax_rate != "", self.float_controller(tax_rate)]
+            if False not in control_list:
+                self.connection.updater(f"""UPDATE data SET price_coefficient={float(price_coefficient)}, day_coefficient={int(day_coefficient)}, night_coefficient={int(night_coefficient)}, 
+                tax_rate={float(tax_rate)} WHERE yearID={year_id} AND periodID={period_id} """)
+                self.loader_recorded_years()
+            else:
+                self.error_message_shower(control_list, sender)
+        elif sender.text() == "Sil":
+            control_list = [(year_id, period_id) in year_list]
+            if False not in control_list:
+                self.connection.deleter(f"""DELETE FROM data WHERE yearID={year_id} AND periodID={period_id} """)
+                self.loader_recorded_years()
+                self.cleaner()
+            else:
+                self.error_message_shower(control_list, sender)
         else:
-            print("hata var")
+            pass
 
     def closeEvent(self, event):
         self.connection.db_closer()

@@ -16,12 +16,14 @@ class MainWindow(QMainWindow):
         get_out.triggered.connect(self.closeEvent)
 
         self.current_year = str(datetime.now().year)
+        self.current_month = datetime.now().month
 
         self.loader_initialize()
 
         self.ui.cmb_period.currentIndexChanged.connect(self.loader_month)
 
         self.ui.btn_calculate.clicked.connect(self.calculator)
+        self.ui.btn_delete.clicked.connect(self.cleaner)
 
         self.ui.le_normal_day.textChanged.connect(lambda: self.is_number(self.ui.le_normal_day))
         self.ui.le_normal_night.textChanged.connect(lambda: self.is_number(self.ui.le_normal_night))
@@ -64,26 +66,82 @@ class MainWindow(QMainWindow):
         period_list = [i[1] for i in self.connection.selector(f"""SELECT * FROM periods""")]
         period_list.sort()
         self.ui.cmb_period.addItems(period_list)
+        self.ui.cmb_period.setCurrentIndex(0)
+        if self.current_month > 6:
+            self.ui.cmb_period.setCurrentIndex(1)
 
     def loader_month(self):
         self.ui.cmb_month.clear()
         month_list = [i[1] for i in self.connection.selector(f"""SELECT * FROM months""")]
         if self.ui.cmb_period.currentText() == "1. Altı Aylık Dönem":
             self.ui.cmb_month.addItems(month_list[:6])
+            self.ui.cmb_month.setCurrentIndex(self.current_month-1)
         else:
             self.ui.cmb_month.addItems(month_list[6:])
+            self.ui.cmb_month.setCurrentIndex(self.current_month - 7)
+
+    @staticmethod
+    def obj_control(obj):
+        if obj.text() == "":
+            return 0
+        return int(obj.text())
 
     def calculator(self):
-        hour_dict = {"normally_day": int(self.ui.le_normal_day.text()), "normally_night": int(self.ui.le_normal_night.text()), "normally_weekend": int(self.ui.le_normal_weekend.text()),
-                     "watch_hour": int(self.ui.le_watch.text()), "course_day": int(self.ui.le_course_day.text()), "course_night": int(self.ui.le_course_night.text()),
-                     "course_weekend": int(self.ui.le_course_weekend.text()), "special_day": int(self.ui.le_special_day.text()), "special_night": int(self.ui.le_special_night.text()),
-                     "special_weekend": int(self.ui.le_special_weekend.text())}
+        year_name = self.ui.cmb_year.currentText()
+        period_name = self.ui.cmb_period.currentText()
+        year_id = self.connection.find(f"""SELECT id FROM years WHERE name="{year_name}" """)
+        period_id = self.connection.find(f"""SELECT id FROM periods WHERE name="{period_name}" """)
+        multipliers = list(self.connection.selector(f"""SELECT * FROM data WHERE yearID={year_id} AND periodID={period_id}""")[0])
 
+        price_coefficient = multipliers[2]
+        day_coefficient = multipliers[4]
+        night_coefficient = multipliers[3]
+        tax_rate = multipliers[5]
 
+        # these values can selected from a database
+        special_edu_multiplier = 1.25
+        course_multiplier = 2
+        education_state_multiplier = 1
+        if self.ui.rb_graduate.isChecked():
+            education_state_multiplier = 1.05
+        elif self.ui.rb_doctorate.isChecked():
+            education_state_multiplier = 1.15
+        income_tax = 0.15
+        if self.ui.rb_20.isChecked():
+            income_tax = 0.2
+        elif self.ui.rb_27.isChecked():
+            income_tax = 0.27
+        elif self.ui.rb_35.isChecked():
+            income_tax = 0.35
 
+        obj_list = [self.obj_control(self.ui.le_normal_day) * price_coefficient * education_state_multiplier * day_coefficient,
+                    self.obj_control(self.ui.le_normal_night) * price_coefficient * education_state_multiplier * night_coefficient,
+                    self.obj_control(self.ui.le_normal_weekend) * price_coefficient * education_state_multiplier * night_coefficient,
+                    self.obj_control(self.ui.le_watch) * price_coefficient * education_state_multiplier * day_coefficient,
+                    self.obj_control(self.ui.le_course_day) * price_coefficient * education_state_multiplier * day_coefficient * course_multiplier,
+                    self.obj_control(self.ui.le_course_night) * price_coefficient * education_state_multiplier * night_coefficient * course_multiplier,
+                    self.obj_control(self.ui.le_course_weekend) * price_coefficient * education_state_multiplier * night_coefficient * course_multiplier,
+                    self.obj_control(self.ui.le_special_day) * price_coefficient * education_state_multiplier * day_coefficient * special_edu_multiplier,
+                    self.obj_control(self.ui.le_special_night) * price_coefficient * education_state_multiplier * night_coefficient * special_edu_multiplier,
+                    self.obj_control(self.ui.le_special_weekend) * price_coefficient * education_state_multiplier * night_coefficient * special_edu_multiplier
+                    ]
+
+        gross_total = sum(obj_list)
+        income_deduction = gross_total * income_tax
+        tax_deduction = gross_total * tax_rate
+        total_deduction = income_deduction + tax_deduction
+        net_price = gross_total - total_deduction
+        self.ui.le_gross.setText(str(round(gross_total, 2)) + " TL")
+        self.ui.le_deduction.setText(str(round(total_deduction, 2)) + " TL")
+        self.ui.le_net.setText(str(round(net_price, 2)) + " TL")
 
     def cleaner(self):
-        pass
+        self.ui.rb_15.setChecked(True)
+        self.ui.rb_nothing.setChecked(True)
+        obj_list = [self.ui.le_normal_day, self.ui.le_normal_night, self.ui.le_normal_weekend, self.ui.le_watch, self.ui.le_course_day, self.ui.le_course_night, self.ui.le_course_weekend,
+                    self.ui.le_special_day, self.ui.le_special_night, self.ui.le_special_weekend, self.ui.le_gross, self.ui.le_deduction, self.ui.le_net]
+        for obj in obj_list:
+            obj.clear()
 
     def recorder(self):
         pass
