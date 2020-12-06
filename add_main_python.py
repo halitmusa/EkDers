@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:/Users/Erhan/Desktop/githubProject/EkDers/add_main.ui'
+# Form implementation generated from reading ui file 'C:/Users/Erhan/Desktop/githubProject/trash/add_main.ui'
 #
 # Created by: PyQt5 UI code generator 5.6
 #
@@ -513,6 +513,8 @@ class Ui_MainWindow(object):
         self.menu_k.setObjectName("menu_k")
         self.menuYard_m = QtWidgets.QMenu(self.menubar)
         self.menuYard_m.setObjectName("menuYard_m")
+        self.menuRapor = QtWidgets.QMenu(self.menubar)
+        self.menuRapor.setObjectName("menuRapor")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -527,14 +529,18 @@ class Ui_MainWindow(object):
         self.act_about.setObjectName("act_about")
         self.act_help = QtWidgets.QAction(MainWindow)
         self.act_help.setObjectName("act_help")
+        self.act_report = QtWidgets.QAction(MainWindow)
+        self.act_report.setObjectName("act_report")
         self.menuDosya.addAction(self.act_add_staff)
         self.menuDosya.addAction(self.act_add_database)
         self.menu_k.addAction(self.act_exit)
         self.menuYard_m.addAction(self.act_about)
         self.menuYard_m.addAction(self.act_help)
+        self.menuRapor.addAction(self.act_report)
         self.menubar.addAction(self.menuDosya.menuAction())
         self.menubar.addAction(self.menu_k.menuAction())
         self.menubar.addAction(self.menuYard_m.menuAction())
+        self.menubar.addAction(self.menuRapor.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -580,10 +586,12 @@ class Ui_MainWindow(object):
         self.menuDosya.setTitle(_translate("MainWindow", "Ekle"))
         self.menu_k.setTitle(_translate("MainWindow", "Çıkış"))
         self.menuYard_m.setTitle(_translate("MainWindow", "Yardım"))
+        self.menuRapor.setTitle(_translate("MainWindow", "Rapor"))
         self.act_add_staff.setText(_translate("MainWindow", "Kişi Ekle"))
         self.act_add_database.setText(_translate("MainWindow", "Yıl Ekle"))
         self.act_exit.setText(_translate("MainWindow", "Çıkış Yap"))
         self.act_about.setText(_translate("MainWindow", "Hakkında.."))
         self.act_help.setText(_translate("MainWindow", "Yardım"))
+        self.act_report.setText(_translate("MainWindow", "Rapor Ekranı"))
 
 import photos_rc

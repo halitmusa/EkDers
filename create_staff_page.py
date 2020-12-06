@@ -45,6 +45,9 @@ class StaffWindow(QWidget):
             elif index == 5 and not error:
                 QMessageBox.warning(self, "Dikkat", "İsim alanı sadece boşluk ve harflerden oluşabilir")
                 break
+            elif index == 6 and not error:
+                QMessageBox.warning(self, "Dikkat", "Güncellerken girilen TC değeri hatalı.")
+                break
 
     @staticmethod
     def only_letter(p_text):
@@ -97,14 +100,12 @@ class StaffWindow(QWidget):
             old_id_number, old_name = self.connection.selector(f"""SELECT id_number, name FROM staffs WHERE id={index}""")[0]
             new_id_number, ok_pressed = QInputDialog.getText(self, "Cevap ver", "Yeni Değer:", QLineEdit.Normal, old_id_number)
             new_name, ok_pressed = QInputDialog.getText(self, "Cevap ver", "Yeni Değer:", QLineEdit.Normal, old_name)
-
             if old_id_number == new_id_number:
-                # Burada TC girişiyle ilgili bir açık oluşuyor. program crash olabilir. (Rakamlardan başka değerler girilebilir)
                 control_list = [True, True, True, not len(new_name) == 0, new_name.count(" ") > 0,
                                 StaffWindow.only_letter(new_name)]
             else:
                 control_list = [not len(new_id_number) == 0, len(new_id_number) == 11, new_id_number not in id_number_list, not len(new_name) == 0, new_name.count(" ") > 0,
-                                StaffWindow.only_letter(new_name)]
+                                StaffWindow.only_letter(new_name), new_id_number.isnumeric()]
             if False not in control_list:
                 self.connection.updater(f"""UPDATE staffs SET id_number="{new_id_number}", name="{new_name}" WHERE id_number="{old_id_number}" """)
             else:

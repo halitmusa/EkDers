@@ -7,6 +7,7 @@ from create_database_page import DatabaseWindow
 from create_about_page import AboutWindow
 from create_help_page import HelpWindow
 from create_calendar_page import CalendarWindow
+from create_report_page import ReportWindow
 
 
 class App(MainWindow):
@@ -19,6 +20,7 @@ class App(MainWindow):
         self.ui.act_help.triggered.connect(lambda: self.open(HelpWindow))
         self.ui.act_exit.triggered.connect(lambda: self.close())
         self.ui.btn_calendar.clicked.connect(lambda: self.open(CalendarWindow))
+        self.ui.act_report.triggered.connect(lambda: self.open(ReportWindow))
 
     def open(self, param_class):
         self.inst = param_class()
